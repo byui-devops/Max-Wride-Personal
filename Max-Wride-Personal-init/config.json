@@ -1,9 +1,0 @@
-{
-  "testEnvironment": "node",
-  "clearMocks": true,
-  "testMatch": [
-    "**/__tests__/**/*.js",
-    "**/?(*.)+(spec|test).js"
-  ]
-}
-
