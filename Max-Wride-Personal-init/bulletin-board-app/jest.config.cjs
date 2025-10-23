@@ -6,8 +6,9 @@ const testFiles = [
 
 // To simulate coverage for assignment, only calculate coverage of specific file
 const filesCovered = [
-  // "**/*.js",
-  "backend/sum.js"
+  "**/*.js",
+  "!app.js",
+  "!server.js",
 ]
 
 module.exports = {
