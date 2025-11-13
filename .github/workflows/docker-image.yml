@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - run: cd bulletin-board-app
 
       # Step 3: Install dependencies
       # Using 'npm ci' (clean install) is faster and ensures deterministic installs
