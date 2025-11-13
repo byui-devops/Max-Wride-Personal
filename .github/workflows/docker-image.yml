@@ -34,23 +34,24 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - run: cd bulletin-board-app
-
       # Step 3: Install dependencies
       # Using 'npm ci' (clean install) is faster and ensures deterministic installs
       # based on package-lock.json, which is standard CI/CD practice.
       - name: Install dependencies
         run: npm ci
+        working-directory: bulletin-board-app
 
 
       # Step 4: Run unit tests
       - name: Run tests
         run: npm run test
+        working-directory: bulletin-board-app
 
 
       # Step 5: Run test coverage check
       - name: Run test coverage
         run: npm run test:coverage
+        working-directory: bulletin-board-app
 
 
       # --- Deployment Steps (Only runs on a successful push/merge to the 'main' branch) ---
