@@ -21,9 +21,6 @@ env:
 jobs:
   test_and_deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: bulletin-board-app
    
     steps:
       # Step 1: Checkout the code from the repository
