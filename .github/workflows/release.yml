@@ -1,0 +1,53 @@
+name: Release Infrastructure
+
+# Trigger manually via the GitHub Actions UI
+on:
+  workflow_dispatch:
+    inputs:
+      aws_access_key_id:
+        description: 'AWS Access Key ID'
+        required: true
+      aws_secret_access_key:
+        description: 'AWS Secret Access Key'
+        required: true
+      aws_session_token:
+        description: 'AWS Session Token'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # This sets the default working directory for all steps in this job to 'iac'
+    defaults:
+      run:
+        working-directory: ./iac
+
+    # Map the inputs to Environment Variables that Terraform expects
+    env:
+      AWS_ACCESS_KEY_ID: ${{ github.event.inputs.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ github.event.inputs.aws_secret_access_key }}
+      AWS_SESSION_TOKEN: ${{ github.event.inputs.aws_session_token }}
+      # Ensure Terraform uses non-interactive mode
+      TF_IN_AUTOMATION: true
+
+    steps:
+      # 1. Checkout your code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Install Terraform on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # 3. Initialize Terraform (downloads providers)
+      - name: Terraform Init
+        run: terraform init
+
+      # 4. Plan the deployment (shows what will happen)
+      - name: Terraform Plan
+        run: terraform plan
+
+      # 5. Apply the changes automatically
+      - name: Terraform Apply
+        run: terraform apply --auto-approve
