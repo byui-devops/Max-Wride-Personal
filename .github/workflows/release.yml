@@ -1,22 +1,9 @@
-
-
 name: Release
 
 on:
   workflow_dispatch:
     inputs:
-      aws_access_key_id:
-        description: "AWS Access Key ID"
-        required: true
-        type: string
-      aws_secret_access_key:
-        description: "AWS Secret Access Key"
-        required: true
-        type: string
-      aws_session_token:
-        description: "AWS Session Token"
-        required: true
-        type: string
+      # ONLY keep non-sensitive, necessary inputs
       aws_region:
         description: "AWS Region (ex: us-east-1)"
         required: false
@@ -26,6 +13,11 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    
+    # Define permissions for better security (if using OIDC, which is recommended)
+    # permissions:
+    #   id-token: write
+    #   contents: read
 
     defaults:
       run:
@@ -35,14 +27,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --- SECURELY CONFIGURE AWS CREDENTIALS ---
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ github.event.inputs.aws_access_key_id }}
-          aws-secret-access-key: ${{ github.event.inputs.aws_secret_access_key }}
-          aws-session-token: ${{ github.event.inputs.aws_session_token }}
+          # Use GitHub Secrets instead of workflow inputs!
+          # The key names here MUST match the names you defined in your repo secrets.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # The aws-session-token is usually omitted if using long-lived keys,
+          # but if you need it:
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          
+          # Use the non-sensitive workflow input for the region
           aws-region: ${{ github.event.inputs.aws_region }}
 
+      # The rest of your steps remain the same
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
