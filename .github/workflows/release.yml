@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      # ONLY keep non-sensitive, necessary inputs
+      aws_region:
+        description: "AWS Region (ex: us-east-1)"
+        required: false
+        default: "us-east-1"
+        type: string
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    
+    # Define permissions for better security (if using OIDC, which is recommended)
+    # permissions:
+    #   id-token: write
+    #   contents: read
+
+    # This sets the default folder for all steps to 'iac'
+    defaults:
+      run:
+        working-directory: home 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- DEBUG STEP ADDED HERE ---
+      - name: Debug Directory Structure
+        # We override the working-directory to '.' (root) here.
+        # Otherwise, if 'iac' is missing, this step would fail too!
+        working-directory: .  
+        run: |
+          echo "Current directory is: $(pwd)"
+          echo "Listing all files and folders to find where the code is:"
+          ls -R
+      # -----------------------------
+
+      # --- SECURELY CONFIGURE AWS CREDENTIALS ---
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Use GitHub Secrets instead of workflow inputs!
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # The aws-session-token is usually omitted if using long-lived keys,
+          # but if you need it:
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          
+          # Use the non-sensitive workflow input for the region
+          aws-region: ${{ github.event.inputs.aws_region }}
+
+      # The rest of your steps remain the same
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        run: terraform apply --auto-approve -input=false
