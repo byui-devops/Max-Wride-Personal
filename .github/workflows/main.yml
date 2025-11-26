@@ -43,6 +43,8 @@ jobs:
           aws-region: ${{ github.event.inputs.aws_region }}
 
       # The rest of your steps remain the same
+      - name: Ensure iac directory exists
+        run: mkdir -p Max-Wride-Personal/iac
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
