@@ -22,7 +22,7 @@ jobs:
     # This sets the default folder for all steps to 'iac'
     defaults:
       run:
-        working-directory: iac
+        working-directory: home 
 
     steps:
       - name: Checkout code
