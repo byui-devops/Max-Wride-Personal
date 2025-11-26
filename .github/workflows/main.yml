@@ -44,7 +44,7 @@ jobs:
 
       # The rest of your steps remain the same
       - name: Ensure iac directory exists
-        run: mkdir -p Max-Wride-Personal/iac
+        run: mkdir -p /home/runner/work/Max-Wride-Personal/Max-Wride-Personal/iac
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
