@@ -34,7 +34,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-
       # Step 3: Install dependencies
       # Using 'npm ci' (clean install) is faster and ensures deterministic installs
       # based on package-lock.json, which is standard CI/CD practice.
@@ -67,7 +66,7 @@ jobs:
       - name: Set up Docker Buildx
         if: env.IS_MAIN_PUSH == 'true'
         uses: docker/setup-buildx-action@v3
-     
+               
       # Step 6: Log in to Docker Hub (Required for pushing images)
       - name: Login to Docker Hub
         if: env.IS_MAIN_PUSH == 'true'
