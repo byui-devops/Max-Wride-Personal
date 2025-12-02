@@ -42,6 +42,7 @@ jobs:
           # Use the non-sensitive workflow input for the region
           aws-region: ${{ github.event.inputs.aws_region }}
 
+
       # The rest of your steps remain the same
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
